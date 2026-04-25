@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - College Events</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      color: #333;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 3rem;
+    }
+    .page-title {
+      font-weight: 800;
+      font-size: 2.5rem;
+      background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1.5rem;
+      text-shadow: 0px 4px 20px rgba(30, 60, 114, 0.2);
+      text-align: center;
+      animation: fadeInDown 0.8s ease-out;
+    }
+    .glass-container {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 20px;
+      padding: 3rem;
+      max-width: 900px;
+      width: 90%;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+      animation: fadeInUp 0.8s ease-out;
+    }
+    .btn-custom {
+      border: none;
+      border-radius: 50px;
+      padding: 10px 25px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      color: white;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .btn-add {
+      background: linear-gradient(45deg, #1e3c72, #2a5298);
+    }
+    .btn-add:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(30, 60, 114, 0.4);
+      color: white;
+    }
+    .btn-danger-custom {
+      background: linear-gradient(45deg, #d9534f, #c9302c);
+    }
+    .btn-danger-custom:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(217, 83, 79, 0.4);
+      color: white;
+    }
+    .event-card {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(30, 60, 114, 0.1);
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      text-align: left;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+    .event-header {
+      border-bottom: 1px solid rgba(30, 60, 114, 0.1);
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+    }
+    .event-title {
+      font-weight: 800;
+      color: #1e3c72;
+    }
+    .participant-table {
+      width: 100%;
+      background: transparent;
+      margin-top: 10px;
+    }
+    .participant-table th {
+      color: #555;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      padding: 8px 12px;
+      border-bottom: 2px solid rgba(30, 60, 114, 0.1);
+    }
+    .participant-table td {
+      padding: 10px 12px;
+      font-size: 0.95rem;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      color: #333;
+    }
+    .participant-table tr:last-child td {
+      border-bottom: none;
+    }
+    .empty-state {
+      opacity: 0.6;
+      font-style: italic;
+      color: #333;
+      padding: 10px 0;
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container d-flex flex-column align-items-center my-5">
+    <h1 class="page-title">Admin Dashboard</h1>
+    
+    <div class="glass-container">
+      <div class="d-flex justify-content-between mb-4">
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary" style="border-radius: 50px; font-weight: 600;">← Home</a>
+        <div>
+          <a href="{% url 'add_event' %}" class="btn btn-custom btn-add me-2">+ Add Event</a>
+          <a href="{% url 'admin_logout' %}" class="btn btn-custom btn-danger-custom">Logout</a>
+        </div>
+      </div>
+      
+      <h3 class="mb-4 text-dark" style="font-weight: 800;">Manage Events</h3>
+      
+      <div class="events-list">
+        {% for event in events %}
+          <div class="event-card">
+            <div class="event-header d-flex justify-content-between align-items-center">
+              <h4 class="event-title mb-0">{{ event.name }}</h4>
+              <span class="badge" style="background-color: #2a5298;">{{ event.date }}</span>
+            </div>
+            
+            <h6 class="text-secondary" style="font-weight: 600;">Registered Participants:</h6>
+            
+            {% if event.participant_set.all %}
+              <div class="table-responsive">
+                <table class="participant-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Phone</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for participant in event.participant_set.all %}
+                    <tr>
+                      <td>{{ participant.name }}</td>
+                      <td>{{ participant.email }}</td>
+                      <td>{{ participant.phone }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <p class="empty-state mb-0">No participants registered yet.</p>
+            {% endif %}
+          </div>
+        {% empty %}
+          <div class="event-card text-center py-4">
+            <p class="empty-state mb-0">No events have been created yet.</p>
+          </div>
+        {% endfor %}
+      </div>
+      
+    </div>
+  </div>
+</body>
+</html>

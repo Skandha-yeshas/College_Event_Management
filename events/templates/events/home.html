@@ -1,28 +1,212 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <title>Event Home</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
-  <div class="container mt-5 text-center">
-    <h1 class="text-primary mb-4">🎉 College Events 🎉</h1>
-    <a href="{% url 'add_event' %}" class="btn btn-success">+ Add New Event</a>
-    <a href="{% url 'register_participant' %}" class="btn btn-info">Register Participant</a>
+<html lang="en">
 
-    <div class="mt-5">
-      <h3 class="text-dark">Upcoming Events</h3>
-      <ul class="list-group mt-3">
-        {% for event in events %}
-          <li class="list-group-item">
-            <strong>{{ event.name }}</strong> — {{ event.date }} <br>
-            <small>{{ event.description }}</small>
-          </li>
-        {% empty %}
-          <li class="list-group-item">No events yet!</li>
-        {% endfor %}
-      </ul>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College Events - Home</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      color: #333;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hero-section {
+      text-align: center;
+      padding: 4rem 2rem;
+      animation: fadeInDown 1s ease-out;
+    }
+
+    .hero-title {
+      font-weight: 800;
+      font-size: 3.5rem;
+      background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1.5rem;
+      text-shadow: 0px 4px 20px rgba(30, 60, 114, 0.2);
+    }
+
+    .glass-container {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 20px;
+      padding: 3rem;
+      max-width: 800px;
+      width: 100%;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+      animation: fadeInUp 1s ease-out;
+    }
+
+    .btn-custom {
+      border: none;
+      border-radius: 50px;
+      padding: 12px 30px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      color: white;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-add {
+      background: linear-gradient(45deg, #1e3c72, #2a5298);
+    }
+
+    .btn-add:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(30, 60, 114, 0.4);
+      color: white;
+    }
+
+    .btn-register {
+      background: linear-gradient(45deg, #1e3c72, #2a5298);
+    }
+
+    .btn-register:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(30, 60, 114, 0.4);
+      color: white;
+    }
+
+    .event-card {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(30, 60, 114, 0.1);
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      text-align: left;
+      transition: transform 0.3s ease, background 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      cursor: pointer;
+    }
+
+    .event-card:hover {
+      transform: scale(1.02);
+      background: #ffffff;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .event-date {
+      color: #1e3c72;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .empty-state {
+      opacity: 0.6;
+      font-style: italic;
+      color: #333;
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .admin-corner {
+      position: absolute;
+      top: 1.5rem;
+      right: 2rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="admin-corner">
+    <a href="{% url 'admin_dashboard' %}" class="btn btn-custom"
+      style="background: linear-gradient(45deg, #1e3c72, #2a5298); padding: 8px 20px; font-size: 0.8rem;">Admin
+      Login</a>
+  </div>
+
+  <div class="hero-section">
+    <h1 class="hero-title">College Events Gateway</h1>
+    <p class="lead mb-4" style="opacity: 0.8; color: #555;">Discover, create, and manage the most exciting campus
+      experiences.</p>
+    <div class="d-flex justify-content-center gap-3 flex-wrap">
+      <a href="{% url 'register_participant' %}" class="btn btn-custom btn-register">Register Participant</a>
     </div>
   </div>
+
+  <div class="glass-container mt-2 mb-5">
+    <h3 class="mb-4 text-dark" style="font-weight: 600;">Upcoming Events</h3>
+
+    <div class="events-list">
+      {% for event in events %}
+      <div class="event-card" data-bs-toggle="modal" data-bs-target="#eventModal{{ event.id }}">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h5 class="mb-0 text-dark" style="font-weight: 600;">{{ event.name }}</h5>
+          <span class="event-date">{{ event.date }}</span>
+        </div>
+        <p class="mb-0" style="opacity: 0.8; font-size: 0.95rem; color: #444;">{{ event.description|truncatewords:15 }}</p>
+      </div>
+      {% empty %}
+      <div class="event-card text-center py-4" style="cursor: default;">
+        <p class="empty-state mb-0">No upcoming events found. Be the first to add one!</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Render Modals Outside of the Container to fix z-index issues -->
+  {% for event in events %}
+  <div class="modal fade" id="eventModal{{ event.id }}" tabindex="-1" aria-labelledby="eventModalLabel{{ event.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: 20px; border: none; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+        <div class="modal-header" style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2); border-bottom: 1px solid rgba(30, 60, 114, 0.1);">
+          <h5 class="modal-title text-dark" id="eventModalLabel{{ event.id }}" style="font-weight: 800;">{{ event.name }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div class="d-flex justify-content-between mb-3">
+            <span class="badge" style="background-color: #2a5298; font-size: 0.9rem; padding: 8px 12px;">📅 {{ event.date }}</span>
+            <span class="badge" style="background-color: #1e3c72; font-size: 0.9rem; padding: 8px 12px;">📍 {{ event.location }}</span>
+          </div>
+          <h6 style="font-weight: 600; color: #1e3c72; margin-bottom: 10px;">Event Details:</h6>
+          <p style="color: #444; font-size: 1rem; line-height: 1.6;">{{ event.description }}</p>
+        </div>
+        <div class="modal-footer" style="border-top: 1px solid rgba(0,0,0,0.05); background-color: #f8f9fa;">
+          <a href="{% url 'register_participant' %}" class="btn btn-custom btn-register" style="background: linear-gradient(45deg, #1e3c72, #2a5298); color: white; text-decoration: none;">Register Now</a>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="border-radius: 50px;">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
