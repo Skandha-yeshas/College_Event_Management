@@ -9,4 +9,8 @@ urlpatterns = [
     path('admin-login/', views.admin_login, name='admin_login'),
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('admin-logout/', views.admin_logout, name='admin_logout'),
+    path('delete-event/<int:event_id>/', views.delete_event, name='delete_event'),
+    path('participant-login/', views.participant_login, name='participant_login'),
+    path('participant-dashboard/', views.participant_dashboard, name='participant_dashboard'),
+    path('participant-logout/', views.participant_logout, name='participant_logout'),
 ]

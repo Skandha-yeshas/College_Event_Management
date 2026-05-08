@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Participant Dashboard - College Events</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      color: #333;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hero-section {
+      text-align: center;
+      padding: 4rem 2rem 2rem;
+      animation: fadeInDown 0.8s ease-out;
+      width: 100%;
+    }
+
+    .hero-title {
+      font-weight: 800;
+      font-size: 2.5rem;
+      background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+      text-shadow: 0px 4px 20px rgba(30, 60, 114, 0.2);
+    }
+
+    .glass-container {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 800px;
+      width: 90%;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+      animation: fadeInUp 0.8s ease-out;
+      margin-bottom: 2rem;
+    }
+
+    .event-card {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(30, 60, 114, 0.1);
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      text-align: left;
+      transition: transform 0.3s ease, background 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .event-card:hover {
+      transform: scale(1.02);
+      background: #ffffff;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .event-date {
+      color: #1e3c72;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn-custom {
+      border: none;
+      border-radius: 50px;
+      padding: 8px 20px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      color: white;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      text-decoration: none;
+    }
+
+    .btn-logout {
+      background: linear-gradient(45deg, #d9534f, #c9302c);
+    }
+
+    .btn-logout:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(217, 83, 79, 0.4);
+      color: white;
+    }
+
+    .top-bar {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+      padding: 1.5rem 2rem;
+      position: absolute;
+      top: 0;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <a href="{% url 'participant_logout' %}" class="btn btn-custom btn-logout">Logout</a>
+  </div>
+
+  <div class="hero-section">
+    <h1 class="hero-title">Welcome, {{ participant_name }}!</h1>
+    <p class="lead" style="color: #555;">Here are the events you have registered for.</p>
+  </div>
+
+  <div class="glass-container">
+    <h3 class="mb-4 text-dark" style="font-weight: 600;">Registered Events</h3>
+    
+    <div class="events-list">
+      {% for event in events %}
+      <div class="event-card">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h5 class="mb-0 text-dark" style="font-weight: 600;">{{ event.name }}</h5>
+          <span class="event-date">{{ event.date }}</span>
+        </div>
+        <div class="mb-2">
+          <span class="badge" style="background-color: #1e3c72; font-size: 0.8rem;">📍 {{ event.location }}</span>
+        </div>
+        <p class="mb-0" style="opacity: 0.8; font-size: 0.95rem; color: #444;">{{ event.description }}</p>
+      </div>
+      {% empty %}
+      <div class="text-center py-4">
+        <p style="opacity: 0.6; font-style: italic; color: #333; margin-bottom: 1rem;">You haven't registered for any events yet.</p>
+        <a href="{% url 'home' %}" class="btn btn-custom" style="background: linear-gradient(45deg, #1e3c72, #2a5298);">Browse Events</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

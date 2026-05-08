@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -34,6 +35,7 @@
       -webkit-text-fill-color: transparent;
       margin-bottom: 1.5rem;
       text-shadow: 0px 4px 20px rgba(30, 60, 114, 0.2);
+      margin-top: 3rem;
     }
 
     .glass-container {
@@ -43,7 +45,7 @@
       border: 1px solid rgba(255, 255, 255, 0.5);
       border-radius: 20px;
       padding: 3rem;
-      max-width: 800px;
+      max-width: 1000px;
       width: 100%;
       box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
       animation: fadeInUp 1s ease-out;
@@ -82,22 +84,48 @@
       color: white;
     }
 
+    .events-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 5vw;
+      width: 100%;
+    }
+
     .event-card {
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.95);
       border: 1px solid rgba(30, 60, 114, 0.1);
       border-radius: 15px;
-      padding: 1.5rem;
-      margin-bottom: 1rem;
+      padding: 2rem;
       text-align: left;
-      transition: transform 0.3s ease, background 0.3s ease;
+      transition: all 0.3s ease;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
       cursor: pointer;
+      position: relative;
+      aspect-ratio: 1 / 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      overflow: hidden;
+    }
+
+    .event-desc {
+      display: -webkit-box;
+      -webkit-line-clamp: 6;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      opacity: 0.8;
+      font-size: 0.95rem;
+      color: #444;
+      line-height: 1.6;
     }
 
     .event-card:hover {
-      transform: scale(1.02);
+      transform: translateY(-5px);
       background: #ffffff;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 15px 35px rgba(30, 60, 114, 0.15);
     }
 
     .event-date {
@@ -143,10 +171,26 @@
       top: 1.5rem;
       right: 2rem;
     }
+
+    .logo-corner {
+      position: absolute;
+      top: 1.5rem;
+      left: 2rem;
+
+    }
+
+    .logo-corner img {
+      max-height: 50px;
+      padding-bottom: 5px;
+    }
   </style>
 </head>
 
 <body>
+  <div class="logo-corner">
+    <img src="{% static 'events/img/logo.png' %}" alt="College Logo">
+  </div>
+
   <div class="admin-corner">
     <a href="{% url 'admin_dashboard' %}" class="btn btn-custom"
       style="background: linear-gradient(45deg, #1e3c72, #2a5298); padding: 8px 20px; font-size: 0.8rem;">Admin
@@ -159,23 +203,29 @@
       experiences.</p>
     <div class="d-flex justify-content-center gap-3 flex-wrap">
       <a href="{% url 'register_participant' %}" class="btn btn-custom btn-register">Register Participant</a>
+      <a href="{% url 'participant_login' %}" class="btn btn-custom btn-add">Participant Login</a>
     </div>
   </div>
 
-  <div class="glass-container mt-2 mb-5">
-    <h3 class="mb-4 text-dark" style="font-weight: 600;">Upcoming Events</h3>
+  <div class="events-section mt-4 mb-5" style="width: 100%;">
+    <h3 class="mb-0 text-dark text-center" style="font-weight: 800; font-size: 2.2rem;">Upcoming Events</h3>
 
     <div class="events-list">
       {% for event in events %}
       <div class="event-card" data-bs-toggle="modal" data-bs-target="#eventModal{{ event.id }}">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <h5 class="mb-0 text-dark" style="font-weight: 600;">{{ event.name }}</h5>
-          <span class="event-date">{{ event.date }}</span>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4 class="mb-0 text-dark" style="font-weight: 800; font-size: 1.3rem;">{{ event.name }}</h4>
         </div>
-        <p class="mb-0" style="opacity: 0.8; font-size: 0.95rem; color: #444;">{{ event.description|truncatewords:15 }}</p>
+        <div class="mb-3 d-flex flex-wrap gap-2">
+          <span class="badge" style="background-color: #2a5298; font-size: 0.85rem;">📅 {{ event.date }}</span>
+          <span class="badge bg-secondary" style="font-size: 0.85rem;">📍 {{ event.location }}</span>
+        </div>
+        <p class="mb-0 event-desc">
+          {{ event.description }}
+        </p>
       </div>
       {% empty %}
-      <div class="event-card text-center py-4" style="cursor: default;">
+      <div class="event-card text-center py-4" style="cursor: default; width: 100%;">
         <p class="empty-state mb-0">No upcoming events found. Be the first to add one!</p>
       </div>
       {% endfor %}
@@ -184,24 +234,33 @@
 
   <!-- Render Modals Outside of the Container to fix z-index issues -->
   {% for event in events %}
-  <div class="modal fade" id="eventModal{{ event.id }}" tabindex="-1" aria-labelledby="eventModalLabel{{ event.id }}" aria-hidden="true">
+  <div class="modal fade" id="eventModal{{ event.id }}" tabindex="-1" aria-labelledby="eventModalLabel{{ event.id }}"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content" style="border-radius: 20px; border: none; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
-        <div class="modal-header" style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2); border-bottom: 1px solid rgba(30, 60, 114, 0.1);">
-          <h5 class="modal-title text-dark" id="eventModalLabel{{ event.id }}" style="font-weight: 800;">{{ event.name }}</h5>
+      <div class="modal-content"
+        style="border-radius: 20px; border: none; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+        <div class="modal-header"
+          style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2); border-bottom: 1px solid rgba(30, 60, 114, 0.1);">
+          <h5 class="modal-title text-dark" id="eventModalLabel{{ event.id }}" style="font-weight: 800;">{{ event.name
+            }}</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body p-4">
           <div class="d-flex justify-content-between mb-3">
-            <span class="badge" style="background-color: #2a5298; font-size: 0.9rem; padding: 8px 12px;">📅 {{ event.date }}</span>
-            <span class="badge" style="background-color: #1e3c72; font-size: 0.9rem; padding: 8px 12px;">📍 {{ event.location }}</span>
+            <span class="badge" style="background-color: #2a5298; font-size: 0.9rem; padding: 8px 12px;">📅 {{
+              event.date }}</span>
+            <span class="badge" style="background-color: #1e3c72; font-size: 0.9rem; padding: 8px 12px;">📍 {{
+              event.location }}</span>
           </div>
           <h6 style="font-weight: 600; color: #1e3c72; margin-bottom: 10px;">Event Details:</h6>
           <p style="color: #444; font-size: 1rem; line-height: 1.6;">{{ event.description }}</p>
         </div>
         <div class="modal-footer" style="border-top: 1px solid rgba(0,0,0,0.05); background-color: #f8f9fa;">
-          <a href="{% url 'register_participant' %}" class="btn btn-custom btn-register" style="background: linear-gradient(45deg, #1e3c72, #2a5298); color: white; text-decoration: none;">Register Now</a>
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="border-radius: 50px;">Close</button>
+          <a href="{% url 'register_participant' %}?event_id={{ event.id }}" class="btn btn-custom btn-register"
+            style="background: linear-gradient(45deg, #1e3c72, #2a5298); color: white; text-decoration: none;">Register
+            Now</a>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"
+            style="border-radius: 50px;">Close</button>
         </div>
       </div>
     </div>
@@ -209,4 +268,5 @@
   {% endfor %}
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
