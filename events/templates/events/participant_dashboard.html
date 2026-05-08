@@ -50,15 +50,37 @@
       margin-bottom: 2rem;
     }
 
+    .events-list {
+      display: flex;
+      overflow-x: auto;
+      gap: 1.5rem;
+      padding-bottom: 1.5rem;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(30, 60, 114, 0.5) transparent;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x mandatory;
+    }
+
+    .events-list::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .events-list::-webkit-scrollbar-thumb {
+      background-color: rgba(30, 60, 114, 0.5);
+      border-radius: 10px;
+    }
+
     .event-card {
       background: rgba(255, 255, 255, 0.9);
       border: 1px solid rgba(30, 60, 114, 0.1);
       border-radius: 15px;
       padding: 1.5rem;
-      margin-bottom: 1rem;
       text-align: left;
       transition: transform 0.3s ease, background 0.3s ease;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      min-width: 300px;
+      flex: 0 0 auto;
+      scroll-snap-align: start;
     }
 
     .event-card:hover {
