@@ -141,24 +141,33 @@
     }
 
     .event-card {
-      background: rgba(255, 255, 255, 0.95);
-      border: 1px solid rgba(30, 60, 114, 0.1);
-      border-radius: 12px;
-      padding: 1.2rem;
+      border: none;
+      border-radius: 15px;
+      padding: 1.5rem;
       text-align: left;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
       cursor: pointer;
       position: relative;
-      min-width: 230px;
+      min-width: 280px;
+      height: 380px;
       flex: 0 0 auto;
       scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      overflow: hidden;
+      background: linear-gradient(135deg, #1e3c72, #2a2b2d);
+    }
+
+    .event-card>* {
+      position: relative;
+      z-index: 2;
     }
 
     .event-card:hover {
-      transform: scale(1.04);
-      background: #ffffff;
-      box-shadow: 0 15px 35px rgba(30, 60, 114, 0.15);
+      transform: translateY(-10px);
+      box-shadow: 0 15px 40px rgba(30, 60, 114, 0.3);
       z-index: 10;
     }
 
@@ -250,11 +259,13 @@
         {% for event in events %}
         <div class="event-card" data-bs-toggle="modal" data-bs-target="#eventModal{{ event.id }}">
           <div class="mb-2">
-            <h5 class="mb-1 text-dark" style="font-weight: 800; font-size: 1rem; line-height: 1.2;">{{ event.name }}</h5>
+            <h4 class="mb-1 text-white" style="font-weight: 800; font-size: 1.6rem; line-height: 1.2;">{{ event.name }}
+            </h4>
           </div>
-          <div class="d-flex flex-wrap gap-1 mt-auto">
-            <span class="badge" style="background-color: #2a5298; font-size: 0.7rem; padding: 4px 6px;">📅 {{ event.date }}</span>
-            <span class="badge bg-secondary" style="font-size: 0.7rem; padding: 4px 6px;">📍 {{ event.location }}</span>
+          <div class="d-flex flex-wrap gap-2 mt-2">
+            <span class="badge"
+              style="background-color: rgba(255, 255, 255, 0.2); font-size: 0.8rem; padding: 6px 10px; color: white;">📅
+              {{ event.date }}</span>
           </div>
         </div>
         {% empty %}
@@ -276,13 +287,16 @@
         style="border-radius: 20px; border: none; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
         <div class="modal-header"
           style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2); border-bottom: 1px solid rgba(30, 60, 114, 0.1);">
-          <h5 class="modal-title text-dark" id="eventModalLabel{{ event.id }}" style="font-weight: 800;">{{ event.name }}</h5>
+          <h5 class="modal-title text-dark" id="eventModalLabel{{ event.id }}" style="font-weight: 800;">{{ event.name
+            }}</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body p-4">
           <div class="d-flex justify-content-between mb-3">
-            <span class="badge" style="background-color: #2a5298; font-size: 0.9rem; padding: 8px 12px;">📅 {{ event.date }}</span>
-            <span class="badge" style="background-color: #1e3c72; font-size: 0.9rem; padding: 8px 12px;">📍 {{ event.location }}</span>
+            <span class="badge" style="background-color: #2a5298; font-size: 0.9rem; padding: 8px 12px;">📅 {{
+              event.date }}</span>
+            <span class="badge" style="background-color: #1e3c72; font-size: 0.9rem; padding: 8px 12px;">📍 {{
+              event.location }}</span>
           </div>
           <h6 style="font-weight: 600; color: #1e3c72; margin-bottom: 10px;">Event Details:</h6>
           <div style="color: #444; font-size: 1rem; line-height: 1.6;">{{ event.description|linebreaks }}</div>

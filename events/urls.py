@@ -13,4 +13,5 @@ urlpatterns = [
     path('participant-login/', views.participant_login, name='participant_login'),
     path('participant-dashboard/', views.participant_dashboard, name='participant_dashboard'),
     path('participant-logout/', views.participant_logout, name='participant_logout'),
+    path('export-excel/<int:event_id>/', views.export_event_excel, name='export_event_excel'),
 ]

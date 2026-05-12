@@ -5,6 +5,7 @@ class Event(models.Model):
     date = models.DateField()
     location = models.CharField(max_length=100)
     description = models.TextField()
+    image_url = models.URLField(blank=True, null=True, help_text="Paste an image URL here for the event card background")
 
     def __str__(self):
         return self.name

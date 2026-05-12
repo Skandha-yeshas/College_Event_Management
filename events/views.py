@@ -1,5 +1,8 @@
 from django.shortcuts import render, redirect
 from .models import Event, Participant
+import csv
+import openpyxl
+from django.http import HttpResponse
 from django import forms
 from .forms import EventForm, ParticipantForm
 from django.core.mail import send_mail
@@ -109,6 +112,33 @@ def delete_event(request, event_id):
             pass
             
     return redirect('admin_dashboard')
+
+def export_event_excel(request, event_id):
+    if not request.session.get('is_custom_admin'):
+        return redirect('admin_login')
+        
+    try:
+        event = Event.objects.get(id=event_id)
+    except Event.DoesNotExist:
+        return redirect('admin_dashboard')
+        
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = f'attachment; filename="{event.name}_participants.xlsx"'
+    
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+    sheet.title = "Participants"
+    
+    headers = ['Name', 'Email', 'Phone', 'DOB']
+    sheet.append(headers)
+    
+    participants = event.participant_set.all()
+    for p in participants:
+        dob_str = p.dob.strftime('%Y-%m-%d') if p.dob else ''
+        sheet.append([p.name, p.email, p.phone, dob_str])
+        
+    workbook.save(response)
+    return response
 
 def participant_login(request):
     if request.method == 'POST':
