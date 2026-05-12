@@ -4,6 +4,7 @@ import csv
 import openpyxl
 from django.http import HttpResponse
 from django import forms
+from datetime import date
 from .forms import EventForm, ParticipantForm
 from django.core.mail import send_mail
 from django.conf import settings
@@ -110,8 +111,26 @@ def delete_event(request, event_id):
             event.delete()
         except Event.DoesNotExist:
             pass
-            
     return redirect('admin_dashboard')
+
+def edit_event(request, event_id):
+    if not request.session.get('is_custom_admin'):
+        return redirect('admin_login')
+        
+    try:
+        event = Event.objects.get(id=event_id)
+    except Event.DoesNotExist:
+        return redirect('admin_dashboard')
+        
+    if request.method == 'POST':
+        form = EventForm(request.POST, instance=event)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_dashboard')
+    else:
+        form = EventForm(instance=event)
+        
+    return render(request, 'events/edit_event.html', {'form': form, 'event': event})
 
 def export_event_excel(request, event_id):
     if not request.session.get('is_custom_admin'):
@@ -172,4 +191,12 @@ def participant_dashboard(request):
     participants = Participant.objects.filter(name=name, email=email).select_related('event')
     events = [p.event for p in participants]
     
-    return render(request, 'events/participant_dashboard.html', {'events': events, 'participant_name': name})
+    today = date.today()
+    ongoing_events = [e for e in events if e.date >= today]
+    completed_events = [e for e in events if e.date < today]
+    
+    return render(request, 'events/participant_dashboard.html', {
+        'ongoing_events': ongoing_events, 
+        'completed_events': completed_events,
+        'participant_name': name
+    })

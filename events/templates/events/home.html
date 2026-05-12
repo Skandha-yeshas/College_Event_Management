@@ -11,7 +11,8 @@
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      background: linear-gradient(rgba(245, 247, 250, 0.60), rgba(195, 207, 226, 0.60)), url("{% static 'events/img/college_bg.jpg' %}") no-repeat center center fixed;
+      background-size: cover;
       color: #333;
       min-height: 100vh;
       margin: 0;
@@ -128,12 +129,16 @@
     .events-list {
       display: flex;
       overflow-x: auto;
-      gap: 2.5rem;
+      gap: 12px;
       padding: 2rem 60px;
       width: 100%;
       scrollbar-width: none;
       -webkit-overflow-scrolling: touch;
       scroll-snap-type: x mandatory;
+    }
+
+    .events-list .event-card:first-child {
+      margin-left: 20px;
     }
 
     .events-list::-webkit-scrollbar {
@@ -142,16 +147,17 @@
 
     .event-card {
       border: none;
-      border-radius: 15px;
-      padding: 1.5rem;
+      border-radius: 6px;
+      padding: 1rem;
       text-align: left;
-      transition: all 0.3s ease;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
       cursor: pointer;
       position: relative;
-      min-width: 280px;
-      height: 380px;
-      flex: 0 0 auto;
+      width: 192px;
+      max-width: 192px;
+      height: 288px;
+      flex: 0 0 192px;
       scroll-snap-align: start;
       display: flex;
       flex-direction: column;
@@ -166,9 +172,23 @@
     }
 
     .event-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 15px 40px rgba(30, 60, 114, 0.3);
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
       z-index: 10;
+    }
+
+    .hover-details {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      margin-top: 0;
+    }
+
+    .event-card:hover .hover-details {
+      max-height: 100px;
+      opacity: 1;
+      margin-top: 10px;
     }
 
     .event-date {
@@ -183,6 +203,21 @@
       opacity: 0.6;
       font-style: italic;
       color: #333;
+    }
+
+    .btn-category {
+      border: 1px solid rgba(30, 60, 114, 0.5);
+      background: rgba(255, 255, 255, 0.8);
+      color: #1e3c72;
+      border-radius: 50px;
+      padding: 6px 15px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+    .btn-category.active, .btn-category:hover {
+      background: #1e3c72;
+      color: white;
     }
 
     @keyframes fadeInDown {
@@ -252,20 +287,35 @@
 
   <div class="events-section mt-4 mb-5" style="width: 100%;">
     <h3 class="mb-2 text-dark text-center" style="font-weight: 800; font-size: 2.2rem;">Upcoming Events</h3>
+    
+    <!-- Category Filter -->
+    <div class="d-flex justify-content-center gap-2 mb-4 px-3 flex-wrap">
+      <button class="btn btn-category active" onclick="filterCategory('all', this)">All</button>
+      <button class="btn btn-category" onclick="filterCategory('tech', this)">Tech</button>
+      <button class="btn btn-category" onclick="filterCategory('workshop', this)">Workshop</button>
+      <button class="btn btn-category" onclick="filterCategory('finance', this)">Finance</button>
+      <button class="btn btn-category" onclick="filterCategory('literature', this)">Literature</button>
+    </div>
 
     <div class="events-wrapper">
       <button class="scroll-btn left-btn" onclick="scrollEvents('left')">&#8249;</button>
       <div class="events-list" id="eventsList">
         {% for event in events %}
-        <div class="event-card" data-bs-toggle="modal" data-bs-target="#eventModal{{ event.id }}">
+        <div class="event-card" data-bs-toggle="modal" data-bs-target="#eventModal{{ event.id }}" data-category="{{ event.name|lower }} {{ event.description|lower }}">
           <div class="mb-2">
-            <h4 class="mb-1 text-white" style="font-weight: 800; font-size: 1.6rem; line-height: 1.2;">{{ event.name }}
+            <h4 class="mb-1 text-white" style="font-weight: 800; font-size: 1.2rem; line-height: 1.2; word-wrap: break-word; overflow-wrap: break-word; white-space: normal;">{{ event.name }}
             </h4>
           </div>
           <div class="d-flex flex-wrap gap-2 mt-2">
             <span class="badge"
               style="background-color: rgba(255, 255, 255, 0.2); font-size: 0.8rem; padding: 6px 10px; color: white;">📅
               {{ event.date }}</span>
+          </div>
+          <div class="hover-details">
+            <div class="mb-2">
+              <span class="badge" style="background-color: rgba(255, 255, 255, 0.2); font-size: 0.75rem; padding: 6px 10px; color: white; display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">📍 {{ event.location }}</span>
+            </div>
+            <button class="btn btn-sm w-100" style="background: white; color: #1e3c72; font-weight: 700; border-radius: 4px; font-size: 0.8rem;">Register Now</button>
           </div>
         </div>
         {% empty %}
@@ -287,19 +337,16 @@
         style="border-radius: 20px; border: none; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
         <div class="modal-header"
           style="background: linear-gradient(135deg, #f5f7fa, #c3cfe2); border-bottom: 1px solid rgba(30, 60, 114, 0.1);">
-          <h5 class="modal-title text-dark" id="eventModalLabel{{ event.id }}" style="font-weight: 800;">{{ event.name
-            }}</h5>
+          <h5 class="modal-title text-dark" id="eventModalLabel{{ event.id }}" style="font-weight: 800;">{{ event.name }}</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body p-4">
           <div class="d-flex justify-content-between mb-3">
-            <span class="badge" style="background-color: #2a5298; font-size: 0.9rem; padding: 8px 12px;">📅 {{
-              event.date }}</span>
-            <span class="badge" style="background-color: #1e3c72; font-size: 0.9rem; padding: 8px 12px;">📍 {{
-              event.location }}</span>
+            <span class="badge" style="background-color: #2a5298; font-size: 0.9rem; padding: 8px 12px;">📅 {{ event.date }}</span>
+            <span class="badge" style="background-color: #1e3c72; font-size: 0.9rem; padding: 8px 12px;">📍 {{ event.location }}</span>
           </div>
           <h6 style="font-weight: 600; color: #1e3c72; margin-bottom: 10px;">Event Details:</h6>
-          <div style="color: #444; font-size: 1rem; line-height: 1.6;">{{ event.description|linebreaks }}</div>
+          <div style="color: #444; font-size: 1rem; line-height: 1.6; word-wrap: break-word; overflow-wrap: break-word; white-space: normal;">{{ event.description|linebreaks }}</div>
         </div>
         <div class="modal-footer" style="border-top: 1px solid rgba(0,0,0,0.05); background-color: #f8f9fa;">
           <a href="{% url 'register_participant' %}?event_id={{ event.id }}" class="btn btn-custom btn-register"
@@ -316,11 +363,34 @@
   <script>
     function scrollEvents(direction) {
       const container = document.getElementById('eventsList');
-      const scrollAmount = 260; // Approx width of card + gap
+      const scrollAmount = 204; // Approx width of card + gap
       if (direction === 'left') {
         container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
       } else {
         container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      }
+    }
+
+    function filterCategory(category, btnElement) {
+      // Update active state
+      const btns = document.getElementsByClassName('btn-category');
+      for(let i=0; i<btns.length; i++) {
+        btns[i].classList.remove('active');
+      }
+      btnElement.classList.add('active');
+
+      const cards = document.getElementById('eventsList').getElementsByClassName('event-card');
+      
+      for (let i = 0; i < cards.length; i++) {
+        if (cards[i].classList.contains('text-center')) continue; // Skip empty state
+        
+        const cardData = cards[i].getAttribute('data-category');
+        
+        if (category === 'all' || (cardData && cardData.includes(category))) {
+          cards[i].style.display = "";
+        } else {
+          cards[i].style.display = "none";
+        }
       }
     }
   </script>

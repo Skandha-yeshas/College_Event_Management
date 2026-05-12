@@ -37,8 +37,8 @@
       border: 1px solid rgba(255, 255, 255, 0.5);
       border-radius: 20px;
       padding: 3rem;
-      max-width: 900px;
-      width: 90%;
+      max-width: 1200px;
+      width: 95%;
       box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
       animation: fadeInUp 0.8s ease-out;
     }
@@ -139,20 +139,16 @@
         </div>
       </div>
       
-      <h3 class="mb-4 text-dark" style="font-weight: 800;">Dashboard Analytics</h3>
-      <div class="mb-5" style="background: rgba(255, 255, 255, 0.5); padding: 20px; border-radius: 15px;">
-        <canvas id="registrationChart"></canvas>
-      </div>
-      
       <h3 class="mb-4 text-dark" style="font-weight: 800;">Manage Events</h3>
       
-      <div class="events-list">
+      <div class="events-list mb-5">
         {% for event in events %}
           <div class="event-card">
             <div class="event-header d-flex justify-content-between align-items-center">
               <h4 class="event-title mb-0">{{ event.name }}</h4>
               <div class="d-flex align-items-center">
                 <span class="badge me-3" style="background-color: #2a5298; padding: 8px 12px; font-size: 0.85rem;">{{ event.date }}</span>
+                <a href="{% url 'edit_event' event.id %}" class="btn btn-sm btn-outline-secondary me-2" style="border-radius: 50px; padding: 5px 15px; font-size: 0.8rem; border-color: #6c757d; color: #6c757d;">Edit</a>
                 <a href="{% url 'export_event_excel' event.id %}" class="btn btn-sm btn-outline-primary me-2" style="border-radius: 50px; padding: 5px 15px; font-size: 0.8rem; border-color: #1e3c72; color: #1e3c72;">Export Excel</a>
                 <form action="{% url 'delete_event' event.id %}" method="POST" style="display:inline;">
                   {% csrf_token %}
@@ -193,6 +189,13 @@
             <p class="empty-state mb-0">No events have been created yet.</p>
           </div>
         {% endfor %}
+      </div>
+      
+      <hr style="border-color: rgba(30, 60, 114, 0.2); margin: 2rem 0 3rem 0;">
+
+      <h3 class="mb-4 text-dark" style="font-weight: 800;">Dashboard Analytics</h3>
+      <div class="mb-2" style="background: rgba(255, 255, 255, 0.5); padding: 20px; border-radius: 15px;">
+        <canvas id="registrationChart" style="max-height: 400px;"></canvas>
       </div>
       
     </div>
